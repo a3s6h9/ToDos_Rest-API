@@ -6,7 +6,8 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', (err, db) => {
   }
   console.log('Connected to MongoDB server');
 
-  db.collection('Todos').insertOne({
+  let dbo = db.db('ToDoApp');
+/*   db.collection('Todos').insertOne({
     text: 'Something to do',
     completed: false
   }, (err, result) => {
@@ -15,10 +16,10 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', (err, db) => {
     }
   
     console.log(JSON.stringify(result.ops, undefined, 2));
-  });
+  }); */
 
-  /* // Insert new doc into Users (name, age, location)
-  db.collection('Users').insertOne({
+   // Insert new doc into Users (name, age, location)
+  dbo.collection('Users').insertOne({
     name: 'Andrew',
     age: 25,
     location: 'Philadelphia'
@@ -28,7 +29,7 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', (err, db) => {
     }
 
     console.log(result.ops);
-  }); */
+  }); 
 
   db.close();
 });
