@@ -23,6 +23,16 @@ app.post('/todos', (req, res) => {
 
 });
 
+// GET route
+app.get('/todos', (req, res) => {
+  Todo.find()
+      .then( (docs) => {
+        res.send(docs);
+      })
+      .catch( err => res.status(400).send(err));
+
+});
+
 app.listen(5000, () => {
   console.log(`Server started on Port 5000`);
 });
