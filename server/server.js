@@ -10,7 +10,6 @@ let app = express();
 // body-parser middlewear to send JSON data
 app.use(bodyParser.json());
 
-app.listen(3000, () => console.log('server started on Port 3000'));
 
 // route for the post request.
 app.post('/todos', (req, res) => {
@@ -23,3 +22,9 @@ app.post('/todos', (req, res) => {
       .catch( err => res.status(400).send(err));
 
 });
+
+app.listen(5000, () => {
+  console.log(`Server started on Port 5000`);
+});
+
+module.exports = { app };
