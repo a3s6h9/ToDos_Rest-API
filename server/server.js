@@ -14,22 +14,26 @@ app.use(bodyParser.json());
 // route for the post request.
 app.post('/todos', (req, res) => {
   let todo = new Todo({
-    title: req.body.text
+    text: req.body.text
   });
 
   todo.save()
-      .then( doc =>  res.send(doc))
-      .catch( err => res.status(400).send(err));
+      .then((doc) => {
+        res.send(doc);
+      }, (e) => {
+        res.status(400).send(e);
+      });
 
 });
 
 // GET route
 app.get('/todos', (req, res) => {
   Todo.find()
-      .then( (docs) => {
-        res.send(docs);
-      })
-      .catch( err => res.status(400).send(err));
+      .then((doc) => {
+        res.send(doc);
+      }, (e) => {
+        res.status(400).send(e);
+      });
 
 });
 
