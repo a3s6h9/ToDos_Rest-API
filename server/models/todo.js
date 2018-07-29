@@ -6,7 +6,7 @@ let Todo = mongoose.model('Todos', {
     type: String,
     require: true, // have to put/specify this value
     trim: true, // remove the whitespaces from the string
-    minlength: 1 // min length of it should be 3+
+    minlength: 3 // min length of it should be 3+
   },
   completed: {
     type: Boolean,
