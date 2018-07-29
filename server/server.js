@@ -8,7 +8,7 @@ const { User } = require('./models/user');
 
 let app = express();
 
-const port = process.env.PORT || 5000
+const port = process.env.PORT || 5000;
 
 // body-parser middlewear to send JSON data
 app.use(bodyParser.json());
@@ -59,7 +59,7 @@ app.get('/todos/:id', (req, res) => {
 })
 
 app.listen(port, () => {
-  console.log(`Server upd on Port ${port}`);
+  console.log(`Server up on Port ${port}`);
 });
 
 module.exports = { app };
