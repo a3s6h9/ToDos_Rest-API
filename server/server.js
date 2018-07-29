@@ -23,7 +23,8 @@ app.post('/todos', (req, res) => {
   todo.save()
       .then((doc) => {
         res.send(doc);
-      }, (e) => {
+      })
+      .catch( e => {
         res.status(400).send(e);
       })
 
@@ -34,9 +35,10 @@ app.get('/todos', (req, res) => {
   Todo.find()
       .then((doc) => {
         res.send(doc);
-      }, (e) => {
+      })
+      .catch( e => {
         res.status(400).send(e);
-      });
+      })
 
 });
 
