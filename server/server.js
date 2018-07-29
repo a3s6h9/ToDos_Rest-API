@@ -33,8 +33,8 @@ app.post('/todos', (req, res) => {
 // GET route
 app.get('/todos', (req, res) => {
   Todo.find()
-      .then((doc) => {
-        res.send(doc);
+      .then((todo) => {
+        res.send({todo});
       })
       .catch( e => {
         res.status(400).send(e);
