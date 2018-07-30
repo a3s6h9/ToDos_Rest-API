@@ -77,7 +77,7 @@ app.delete('/todos/:id', (req, res) => {
   }).catch( err => res.status(400).send());
 });
 
-app.patch('/todos/:id', (req, res) => {
+/* app.patch('/todos/:id', (req, res) => {
   let id = req.params.id;
   // lodash method to pull out the properties we want from our doc.
   let body = _.pick(req.body, ['text', 'completed']);
@@ -103,7 +103,7 @@ app.patch('/todos/:id', (req, res) => {
     res.send({todo});
   }).catch( e => res.status(400).send());
 
-});
+}); */
 
 app.listen(port, () => {
   console.log(`Server up on Port ${port}`);
