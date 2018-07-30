@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const _ = require('lodash');
 const {ObjectID} = require('mongodb');
 
 const { mongoose } = require('./db/mongoose');
@@ -8,7 +9,7 @@ const { User } = require('./models/user');
 
 let app = express();
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 3000;
 
 // body-parser middlewear to send JSON data
 app.use(bodyParser.json());
@@ -71,10 +72,38 @@ app.delete('/todos/:id', (req, res) => {
     if(!todo) {
       return res.status(404).send();
     }
-      res.status(200).send(todo);
-      
+      res.status(200).send({todo});
+
   }).catch( err => res.status(400).send());
-})
+});
+
+app.patch('/todos/:id', (req, res) => {
+  let id = req.params.id;
+  // lodash method to pull out the properties we want from our doc.
+  let body = _.pick(req.body, ['text', 'completed']);
+
+  if(!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+
+  // lodash method to check if the certain value is boolean or not.
+  if (_.isBoolean(body.completed) && body.completed) {
+    body.completedAt = new Date().getTime();
+  } else {
+    body.completed = false;
+    body.completedAt = null;
+  }
+
+  // query
+  Todo.findByIdAndUpdate(id, {$set: body}, {new: true}).then( todo => {
+    if (!todo) {
+      return res.status(404).send();
+    }
+
+    res.send({todo});
+  }).catch( e => res.status(400).send());
+
+});
 
 app.listen(port, () => {
   console.log(`Server up on Port ${port}`);
