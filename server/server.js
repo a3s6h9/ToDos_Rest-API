@@ -1,6 +1,6 @@
+const _ = require('lodash');
 const express = require('express');
 const bodyParser = require('body-parser');
-const _ = require('lodash');
 const {ObjectID} = require('mongodb');
 
 const { mongoose } = require('./db/mongoose');
@@ -34,10 +34,10 @@ app.post('/todos', (req, res) => {
 // GET route
 app.get('/todos', (req, res) => {
   Todo.find()
-      .then((todo) => {
-        res.send({todo});
+      .then((todos) => {
+        res.send({todos});
       })
-      .catch( e => {
+      .catch( (err) => {
         res.status(400).send(e);
       })
 
@@ -52,13 +52,15 @@ app.get('/todos/:id', (req, res) => {
   }
 
   Todo.findById(id)
-      .then( todo => {
+      .then( (todo) => {
         if (!todo) {
-          res.status(404).send()
-        } else {
-          res.send({todo}) // same as todo: todo
+          return res.status(404).send()
         }
-      }).catch( e => res.status(404).send())
+          res.send({todo}) // same as todo: todo
+        
+      }).catch( (err) => {
+        res.status(404).send();
+      })
 });
 
 app.delete('/todos/:id', (req, res) => {
@@ -68,13 +70,15 @@ app.delete('/todos/:id', (req, res) => {
     return res.status(404).send();
   }
 
-  Todo.findByIdAndRemove(id).then( todo => {
+  Todo.findByIdAndRemove(id).then( (todo) => {
     if(!todo) {
       return res.status(404).send();
     }
-      res.status(200).send({todo});
+      res.send({todo});
 
-  }).catch( err => res.status(400).send());
+  }).catch( (err) => {
+    res.status(400).send();
+  });
 });
 
 app.patch('/todos/:id', (req, res) => {
@@ -95,13 +99,15 @@ app.patch('/todos/:id', (req, res) => {
   }
 
   // query
-  Todo.findByIdAndUpdate(id, {$set: body}, {new: true}).then( todo => {
+  Todo.findByIdAndUpdate(id, {$set: body}, {new: true}).then( (todo) => {
     if (!todo) {
       return res.status(404).send();
     }
 
     res.send({todo});
-  }).catch( e => res.status(400).send());
+  }).catch( (e) => {
+    res.status(400).send();
+  });
 
 });
 
