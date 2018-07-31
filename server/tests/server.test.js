@@ -12,7 +12,9 @@ const todos = [{
   text: 'First test todo'
 }, {
   _id: new ObjectID(),
-  text: 'Second test todo'
+  text: 'Second test todo',
+  completed: true,
+  completedAt: 333
 }];
 
 beforeEach((done) => {
@@ -69,7 +71,7 @@ describe('GET /todos', () => {
       .get('/todos')
       .expect(200)
       .expect((res) => {
-        expect(res.body.todo.length).toBe(2);
+        expect(res.body.todos.length).toBe(2);
       })
       .end(done);
   });
@@ -148,4 +150,45 @@ describe('GET /todos/:id', () => {
   }); 
 
 });
+
+describe('PATCH /todos/:id', () => {
+  it('should update the ToDO', (done) => {
+    let id = todos[0]._id.toHexString();
+    let ntext = "this is the new text";
+
+    request(app)
+      .patch(`/todos/${id}`)
+      .send({
+          completed: true,
+          text: ntext,   //same as text:text
+      })
+      .expect(200)
+      .expect( res => {
+        expect(res.body.todo.text).toBe(ntext);
+        expect(res.body.todo.completed).toBe(true);
+        //expect(res.body.todo.completedAt).toBeA('number');
+      })
+      .end(done);
+  });
+
+  it('should update the ToDo completed to false', (done) => {
+    let id = todos[1]._id.toHexString();
+    let ntext = "this is the new text false";
+
+    request(app)
+      .patch(`/todos/${id}`)
+      .send({
+          completed: false,
+          text: ntext    //same as text:text
+      })
+      .expect(200)
+      .expect( function(res) {
+        expect(res.body.todo.text).toBe(ntext);
+        expect(res.body.todo.completed).toBe(false);
+       // expect(res.body.todo.completedAt).toNotExist();
+      })
+      .end(done);
+  });
+
+})
 
