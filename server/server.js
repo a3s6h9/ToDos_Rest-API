@@ -11,6 +11,8 @@ let app = express();
 
 let port = process.env.PORT || 3000;
 
+console.log(process.env);
+
 // body-parser middlewear to send JSON data
 app.use(bodyParser.json());
 
