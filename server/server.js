@@ -8,6 +8,7 @@ const {ObjectID} = require('mongodb');
 const { mongoose } = require('./db/mongoose');
 const { Todo } = require('./models/todo');
 const { User } = require('./models/user');
+const { authenticate } = require('./middlewares/authenticate');
 
 let app = express();
 
@@ -40,7 +41,7 @@ app.get('/todos', (req, res) => {
         res.send({todos});
       })
       .catch( (err) => {
-        res.status(400).send(e);
+        res.status(400).send(err);
       })
 
 });
@@ -111,6 +112,26 @@ app.patch('/todos/:id', (req, res) => {
     res.status(400).send();
   });
 
+});
+
+// users route
+app.post('/users', (req, res) => {
+  let body = _.pick(req.body, ['email', 'password']);
+  let user = new User(body);
+
+  user.save().then( () => {
+    // res.send(user)
+    return user.generateAuthToken();
+
+  }).then( token => {
+    res.header('x-auth', token).send(user);
+
+  }).catch( e => res.status(400).send(e));
+});
+
+
+app.get('/users/me', authenticate, (req, res) => {
+  res.send(req.user);
 });
 
 app.listen(port, () => {

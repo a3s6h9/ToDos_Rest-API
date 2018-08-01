@@ -1,26 +1,83 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
+const jwt = require('jsonwebtoken');
+const _ = require('lodash');
 
-let User = mongoose.model('Users', {
-  name: {
-    type: String,
-    require: true, // have to put/specify this value
-    trim: true, // remove the whitespaces from the string
-    minlength: 3 // min length of it should be 3+
-  },
+
+const UserSchema = new mongoose.Schema({
+  
   email: {
     type: String,
     require: true, // have to put/specify this value
     trim: true, // remove the whitespaces from the string
-    minlength: 5 // min length of it should be 3+
+    minlength: 5, // min length of it should be 3+
+    unique: true,
+    validate: {
+      validator: validator.isEmail, // same as (value) => validator.isEmail(value);
+      message: '{value} is not a valid E-Mail'
+    }
   },
-  location: {
+  password: {
     type: String,
-    require: true, // have to put/specify this value
-    trim: true, // remove the whitespaces from the string
-    minlength: 1 // min length of it should be 3+
-  }
+    required: true,
+    minlength: 7
+  },
+  tokens: [{
+    access: {
+      type: String,
+      required: true
+    },
+    token: {
+      type: String,
+      required: true
+    }
+  }]
 
 });
+
+// restrict what properties we gon let users see once they make the request, toJSON is gon overwrite the generateauthtoken fucn.
+UserSchema.methods.toJSON = function() {
+  let user = this;
+  let userObj = user.toObject();
+
+  // now pick up the properties we want with lodash.
+  return _.pick(userObj, ['_id', 'email']);
+}
+
+// generate the token
+UserSchema.methods.generateAuthToken = function() {
+  let user = this;
+  let access = 'auth';
+  let token = jwt.sign({_id: user._id.toHexString(), access}, 'secret').toString();
+
+  user.tokens.push({access, token});
+
+  return user.save().then( () => {
+    return token; // this returns a another promise but cuz we are already returning user.save() we dont need to do that.
+  });
+}
+
+//validation GET /Users/me
+UserSchema.statics.findByToken = function(token) {
+  // uppercase U
+  let User = this;
+  let decoded;
+
+  try {
+    decoded = jwt.verify(token, 'secret');
+  } catch (e) {
+    return Promise.reject(); // u could pass a value of we want in it, itll act like the err in catch block
+  }
+
+  return User.findOne({
+    '_id': decoded._id,
+    'tokens.token': token,
+    'tokens.access': 'auth'
+  });
+
+}
+
+let User = mongoose.model('User', UserSchema); // we cant define methods in a model so we need to create a mongoose Shema.
 
 module.exports = {
   User
