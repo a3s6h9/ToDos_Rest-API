@@ -1,3 +1,4 @@
+
 require('./config/config');
 
 const _ = require('lodash');
@@ -66,6 +67,7 @@ app.get('/todos/:id', (req, res) => {
       })
 });
 
+// DELETE /todos/:id
 app.delete('/todos/:id', (req, res) => {
   let id = req.params.id;
 
@@ -84,6 +86,7 @@ app.delete('/todos/:id', (req, res) => {
   });
 });
 
+// UPDATE /todos/:id
 app.patch('/todos/:id', (req, res) => {
   let id = req.params.id;
   // lodash method to pull out the properties we want from our doc.
@@ -127,6 +130,19 @@ app.post('/users', (req, res) => {
     res.header('x-auth', token).send(user);
 
   }).catch( e => res.status(400).send(e));
+});
+
+// POST /user/login
+app.post('/users/login', (req, res) => {
+  let body = _.pick(req.body, ['email', 'password']);
+  
+  User.findByCredentials(body.email, body.password).then( user => {
+    return user.generateAuthToken().then( token => {
+      res.header('x-auth', token).send(user);
+    })
+  }).catch( err => {
+    res.status(400).send();
+  });
 });
 
 
