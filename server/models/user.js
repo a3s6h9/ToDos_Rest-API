@@ -9,7 +9,7 @@ const UserSchema = new mongoose.Schema({
   
   email: {
     type: String,
-    require: true, // have to put/specify this value
+    required: true, // have to put/specify this value
     trim: true, // remove the whitespaces from the string
     minlength: 5, // min length of it should be 3+
     unique: true,
